@@ -30,6 +30,7 @@ char* smmObj_getTypeName(int type)
 	return (char*)smmNodeName[type];
 }
 
+
 typedef enum smmObjGrade {
     smmObjGrade_Ap = 0,
     smmObjGrade_A0,
@@ -51,7 +52,7 @@ typedef struct smmObject {
        int credit;
        int energy;
        smmObjGrade_e grade;
-} smmObject_t;
+}smmObject_t;
 
 //2. 구조체 배열 변수 정의->이제 배열 필요 없음 
 //smmObject_t smm_node[MAX_NODE];
@@ -66,7 +67,7 @@ static int smmObj_energy[MAX_NODE];
 
 //3. 관련 함수 변경 
 //object generation
-void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e objgrade)
+void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjType_e objgrade)
 {
 	#if 0
 	strcpy(smmObj_name[smmObj_noNode], name);
@@ -81,10 +82,10 @@ void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, i
     
     strcpy(ptr->name, name);
     ptr->objType = objType;
-    ptr->grade = grade;
     ptr->type = type;
     ptr->credit = credit;
     ptr->energy = energy;
+    ptr->grade = objgrade;
     
     return ptr;
 }
@@ -93,26 +94,32 @@ void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, i
 char* smmObj_getNodeName(void* obj)
 {
 	smmObject_t* ptr = (smmObject_t*)obj;
+	
 	return ptr->name;
 }
 
+
 //3. 관련 함수 변경 
-int smmObj_getNodeType(int node_nr)
+int smmObj_getNodeType(void* obj)
 {
-	return smm_node[node_nr].type;
+	smmObject_t* ptr = (smmObject_t*)obj;
+    return ptr->type;
 }
 
-int smmObj_getNodeCredit(int node_nr)
+int smmObj_getNodeCredit(void* obj)
 {
-	return smm_node[node_nr].credit;
+	smmObject_t* ptr = (smmObject_t*)obj;
+    return ptr->credit;
 }
 
-int smmObj_getNodeEnergy(int node_nr)
+int smmObj_getNodeEnergy(void* obj)
 {
-	return smm_node[node_nr].energy;
+	smmObject_t* ptr = (smmObject_t*)obj;
+    return ptr->energy;
 }
 
-#if 0
+
+
 //member retrieving
 
 
@@ -120,11 +127,11 @@ int smmObj_getNodeEnergy(int node_nr)
 //element to string
 char* smmObj_getNodeName(smmNode_e type)
 {
-    return smmNodeName[type];
+    return smmObj_getNodeName(type);
 }
 
-char* smmObj_getGradeName(smmGrade_e grade)
+char* smmObj_getGradeName(smmObjGrade_e grade)
 {
-    return smmGradeName[grade];
+    return smmObj_getGradeName(grade);
 }
-#endif
+
