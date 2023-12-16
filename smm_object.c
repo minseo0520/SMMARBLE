@@ -30,6 +30,15 @@ char* smmObj_getTypeName(int type)
 	return (char*)smmNodeName[type];
 }
 
+typedef enum smmNode{
+    lecture,
+    restaurant,
+    laboratory,
+    home,
+    gotolab,
+    foodChance,
+    festival
+} smmNode_e;
 
 typedef enum smmObjGrade {
     smmObjGrade_Ap = 0,
@@ -94,9 +103,9 @@ void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, i
 char* smmObj_getNodeName(void* obj)
 {
 	smmObject_t* ptr = (smmObject_t*)obj;
-	
 	return ptr->name;
 }
+
 
 
 //3. 관련 함수 변경 
@@ -125,13 +134,13 @@ int smmObj_getNodeEnergy(void* obj)
 
 
 //element to string
-char* smmObj_getNodeName(smmNode_e type)
+char* smmObj_getNodeNameByType(smmNode_e type)   //해당노드타입의 이름을 가져와서 반환, 이름이 중복되어서 getNodeNameByType로 수정 
 {
-    return smmObj_getNodeName(type);
+    return smmObj_getTypeName(type);
 }
 
-char* smmObj_getGradeName(smmObjGrade_e grade)
+char* smmObj_getNodeGrade(smmObjGrade_e grade)
 {
-    return smmObj_getGradeName(grade);
+    return smmObj_getNodeGrade(grade);
 }
 

@@ -210,7 +210,7 @@ int main(int argc, const char * argv[]) {
 		 smmObj_getNodeType(boardObj), smmObj_getTypeName(smmObj_getNodeType(boardObj)),
 		 smmObj_getNodeCredit(boardObj), smmObj_getNodeEnergy(boardObj));
 	}
-    //printf("(%s)", smmObj_getTypeName(SMMNODE_TYPE_LECTURE));
+    printf("(%s)", smmObj_getTypeName(SMMNODE_TYPE_LECTURE));
     
     
     #if 0
