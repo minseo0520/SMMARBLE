@@ -11,47 +11,23 @@
 
 #define MAX_NODETYPE    7
 #define MAX_GRADE       9
-#define MAX_NODE		100
+#define MAX_NODE        100
 
 
 static char smmNodeName[SMMNODE_TYPE_MAX][MAX_CHARNAME] = {
-	"lecture",
-	"restaurant",
-	"lab",
-	"home",
-	"gotolab",
-	"foodChance",
-	"festival"
+       "강의",
+       "식당",
+       "실험실",
+       "집",
+       "실험실로이동",
+       "음식찬스",
+       "축제시간"
 };
-
 
 char* smmObj_getTypeName(int type)
 {
-	return (char*)smmNodeName[type];
+      return (char*)smmNodeName[type];
 }
-
-typedef enum smmNode{
-    lecture,
-    restaurant,
-    laboratory,
-    home,
-    gotolab,
-    foodChance,
-    festival
-} smmNode_e;
-
-typedef enum smmObjGrade {
-    smmObjGrade_Ap = 0,
-    smmObjGrade_A0,
-    smmObjGrade_Am,
-    smmObjGrade_Bp,
-    smmObjGrade_B0,
-    smmObjGrade_Bm,
-    smmObjGrade_Cp,
-    smmObjGrade_C0,
-    smmObjGrade_Cm
-} smmObjGrade_e;
-
 
 //1. 구조체 형식 정의
 typedef struct smmObject {
@@ -61,36 +37,21 @@ typedef struct smmObject {
        int credit;
        int energy;
        smmObjGrade_e grade;
-}smmObject_t;
+} smmObject_t;
 
-//2. 구조체 배열 변수 정의->이제 배열 필요 없음 
-//smmObject_t smm_node[MAX_NODE];
+//static smmObject_t smm_node[MAX_NODE];
 //static int smmObj_noNode = 0;
-
-#if 0 
-static char smmObj_name[MAX_NODE][MAX_CHARNAME];
-static int smmObj_type[MAX_NODE];
-static int smmObj_credit[MAX_NODE];
-static int smmObj_energy[MAX_NODE];
-#endif
 
 //3. 관련 함수 변경 
 //object generation
 void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjType_e objgrade)
-{
-	#if 0
-	strcpy(smmObj_name[smmObj_noNode], name);
-    smmObj_type[smmObj_noNode] = type;
-    smmObj_credit[smmObj_noNode] = credit;
-    smmObj_energy[smmObj_noNode] = energy;
-    #endif
-    
+{    
     smmObject_t* ptr;
     
     ptr = (smmObject_t*)malloc(sizeof(smmObject_t));
     
     strcpy(ptr->name, name);
-    ptr->objType = objType;
+    ptr->objType = objType;     //Type -> objType로 수정. 그래야 node의 Type이 정상작동 
     ptr->type = type;
     ptr->credit = credit;
     ptr->energy = energy;
@@ -99,7 +60,9 @@ void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, i
     return ptr;
 }
 
+
 //3. 관련 함수 변경 
+//member retrieving
 char* smmObj_getNodeName(void* obj)
 {
 	smmObject_t* ptr = (smmObject_t*)obj;
@@ -128,19 +91,14 @@ int smmObj_getNodeEnergy(void* obj)
 }
 
 
-
-//member retrieving
-
-
-
 //element to string
-char* smmObj_getNodeNameByType(smmNode_e type)   //해당노드타입의 이름을 가져와서 반환, 이름이 중복되어서 getNodeNameByType로 수정 
+char* smmObj_getNodeNameType(smmNode_e type)   //해당노드타입의 이름을 가져와서 반환, 이름이 중복되어서 getNodeNameByType로 수정 
 {
     return smmObj_getTypeName(type);
 }
 
 char* smmObj_getNodeGrade(smmObjGrade_e grade)
 {
-    return smmObj_getNodeGrade(grade);
+	return smmObj_getNodeGrade(grade);
 }
 

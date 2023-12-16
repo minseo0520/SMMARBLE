@@ -128,8 +128,7 @@ void actionNode(int player)
 	int type = smmObj_getNodeType(boardPtr);
 	char *name = smmObj_getNodeName(boardPtr);
 	void *gradePtr;
-	
-    switch(type)
+	    switch(type)
     {
     	case SMMNODE_TYPE_LECTURE:
             cur_player[player].accumCredit += smmObj_getNodeCredit(boardPtr);
@@ -191,11 +190,11 @@ int main(int argc, const char * argv[]) {
     while (fscanf(fp, "%s %i %i %i", name, &type, &credit, &energy) == 4) //read a node parameter set
     {
     	//store the parameter set
-       void *boardObj = smmObj_genObject(name, type, credit, energy, smmObjType_board, 0);
+       void *boardObj = smmObj_genObject(name, smmObjType_board, type, credit, energy, 0);
        smmdb_addTail(LISTNO_NODE, boardObj); 
        
         if(type == SMMNODE_TYPE_HOME)
-           initEnergy = energy;
+           initEnergy = energy; 
         board_nr++;
     }
     fclose(fp);
@@ -213,7 +212,7 @@ int main(int argc, const char * argv[]) {
     printf("(%s)", smmObj_getTypeName(SMMNODE_TYPE_LECTURE));
     
     
-    #if 0
+    
     //2. food card config 
     if ((fp = fopen(FOODFILEPATH,"r")) == NULL)
     {
@@ -222,12 +221,21 @@ int main(int argc, const char * argv[]) {
     }
     
     printf("\n\nReading food card component......\n");
-    while () //read a food parameter set
+    while (fscanf(fp, "%s %i", name, &energy)==2)//read a food parameter set
     {
-        //store the parameter set
+	    void *foodObj = smmObj_genObject(name, SMMNODE_TYPE_FOODCHANCE, 0, 0, energy, 0);  //foodObj라는 새로운 코드 작성 
+		smmdb_addTail(LISTNO_FOODCARD, foodObj);  //위와 같이 코드 작성. LISTNO_NODE-> LISTNO_FOODCARD
+		food_nr++; 
     }
     fclose(fp);
-    printf("Total number of food cards : %i\n", food_nr);
+    
+    for(i=0; i<food_nr; i++) //food_nr까지 반복 
+    {
+    	void* foodObj = smmdb_getData(LISTNO_FOODCARD, i);
+		printf("node %i : %s, charge : %i\n",
+		i, smmObj_getNodeName(foodObj), smmObj_getNodeEnergy(foodObj));
+	}
+	printf("Total number of food cards : %i\n", food_nr);
     
     
     
@@ -239,13 +247,21 @@ int main(int argc, const char * argv[]) {
     }
     
     printf("\n\nReading festival card component......\n");
-    while () //read a festival card string
+    while (fscanf(fp, "%s", name)==1) //read a festival card string
     {
-        //store the parameter set
+        void *festObj = smmObj_genObject(name, 0, 0, 0, 0, 0);  //festObj라는 새로운 코드 작성 
+		smmdb_addTail(LISTNO_FESTCARD, festObj);  //위와 같이 코드 작성. LISTNO_NODE-> LISTNO_FESTCARD
+		festival_nr++; 
     }
     fclose(fp);
+    
+    for(i=0; i<festival_nr; i++)  //festival_nr까지 반복 
+    {
+    	void* festObj = smmdb_getData(LISTNO_FESTCARD, i); 
+		printf("node %i : %s\n", i, smmObj_getNodeName(festObj));
+	}
     printf("Total number of festival cards : %i\n", festival_nr);
-    #endif
+    
     
     
     //2. Player configuration ---------------------------------------------------------------------------------

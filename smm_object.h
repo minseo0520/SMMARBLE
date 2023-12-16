@@ -24,6 +24,28 @@ typedef enum smmObjType {
     smmObjType_grade
 } smmObjType_e;
 
+typedef enum smmNode{
+    lecture,
+    restaurant,
+    laboratory,
+    home,
+    gotolab,
+    foodChance,
+    festival
+} smmNode_e;
+
+typedef enum smmObjGrade {
+    smmObjGrade_Ap = 0,
+    smmObjGrade_A0,
+    smmObjGrade_Am,
+    smmObjGrade_Bp,
+    smmObjGrade_B0,
+    smmObjGrade_Bm,
+    smmObjGrade_Cp,
+    smmObjGrade_C0,
+    smmObjGrade_Cm
+} smmObjGrade_e;
+
 /* node type :
     lecture,
     restaurant,
@@ -60,4 +82,5 @@ int smmObj_getNodeEnergy(void* obj);
 
 //element to string
 char* smmObj_getTypeName(int type);
+char* smmObj_getTypeGrade(int grade);
 #endif /* smm_object_h */
