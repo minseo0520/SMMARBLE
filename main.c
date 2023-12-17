@@ -106,18 +106,24 @@ void generatePlayers(int n, int initEnergy) //generate a new player
 }
 
 
+void clearInputBuffer()   //함수를 호출하여 입력버퍼를 비우기 위한 함수 
+{
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);  //getchar로 한 번에 한 문자씩 입력을 읽어드림. \n이나 파일의 끝을 만날 때까지 입력 소비 
+}
 
 int rolldie(int player)
 {
     char c;
     printf(" Press any key to roll a die (press g to see grade): ");
+    
+    clearInputBuffer();  //입력 버퍼 비우기 위해 함수 호출 
+    
     c = getchar();
-    fflush(stdin);
     
     if (c == 'g')
         printGrades(player);
-
-    
+        
     return (rand() % MAX_DIE + 1);
 }
 
@@ -128,49 +134,80 @@ void actionNode(int player)
     void *boardPtr = smmdb_getData(LISTNO_NODE, cur_player[player].position);
     int type = smmObj_getNodeType(boardPtr);
     char *name = smmObj_getNodeName(boardPtr);
-
-    switch (type)
-    {
+    void *gradePtr;
+    char response[20];
+    
+    int validInput = 0;  //입력이 올바른지 확인하기 위한 플래그 변수  
+    
+    
+     switch (type)
+    {   	
         case SMMNODE_TYPE_LECTURE:
-            printf("Lecture %s : %i(credit:%i, energy:%i) starts! Are you going to join?: ",   
-                   smmObj_getNodeName(boardPtr), smmObj_getNodeGrade(boardPtr),
-                   smmObj_getNodeCredit(boardPtr), smmObj_getNodeEnergy(boardPtr));    // 강의에 join할 지 drop할 지 묻는 출력 코드 
+    do 
+	{
+        printf("Lecture %s (credit:%i, energy:%i) starts! Are you going to join?: ",   
+               smmObj_getNodeName(boardPtr), smmObj_getNodeCredit(boardPtr), smmObj_getNodeEnergy(boardPtr));
 
-            char response[20];
-            scanf("%s", response);   //플레이어의 입력 받음
+        scanf("%s", response);
 
-            if (strcmp(response, "join") == 0)
+        if (strcmp(response, "join") == 0) 
+        {
+        	if (0 <= cur_player[player].energy && cur_player[player].energy < smmObj_getNodeEnergy(boardPtr))
+            {
+            	printf("%s is too hungry to take the lecture %s. Not enough energy!\n", cur_player[player].name, smmObj_getNodeName(boardPtr));
+
+                // 에너지가 부족하면 다음 턴으로 넘어가도록 설정
+                validInput = 1;
+			}
+			
+			else
             {
             	cur_player[player].accumCredit += smmObj_getNodeCredit(boardPtr);
                 cur_player[player].energy -= smmObj_getNodeEnergy(boardPtr);
-                
-                printf("%s successfully takes the lecture %s\n", cur_player[player].name, smmObj_getNodeName(boardPtr));   // 플레이어가 강의에 참여한 경우의 코드
-                
+
+                printf("%s successfully takes the lecture %s\n", cur_player[player].name, smmObj_getNodeName(boardPtr));
+
                 // 학점 생성
-                void *gradePtr;
                 gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit(boardPtr), 0, 0);
                 smmdb_addTail(LISTNO_OFFSET_GRADE + player, gradePtr);
-            }
-            else if (strcmp(response, "drop") == 0)
-            {
-                printf("Player %s drops the lecture %s!\n", cur_player[player].name, smmObj_getNodeName(boardPtr));   // 플레이어가 강의를 drop 했을 때 코드
-            }
-            else
-            {
-                printf("Invalid input! Please enter 'join' or 'drop'.\n");  // 잘못된 입력에 대한 코드 
-            }
-            break;
+
+                validInput = 1;  // 플래그 변수가 1이면 do-while 루프를 종료한다.
+			}
+		}
+		else if (strcmp(response, "drop") == 0)
+		{
+			printf("Player %s drops the lecture %s!\n", cur_player[player].name, smmObj_getNodeName(boardPtr));
+            validInput = 1;
+		}
+        else
+        {
+        	printf("Invalid input! Please enter 'join' or 'drop'.\n");
+		}
+		
+    } while (!validInput);
+    	break;  
+            
         case SMMNODE_TYPE_FOODCHANCE:
-        printf("%s gets a food chance! press any key to pick a food card:", cur_player[player].name);
-        scanf(" %c", response);
+			printf("%s gets a food chance! press any key to pick a food card:", cur_player[player].name);
+        	scanf(" %c", response);
         
-        srand(time(NULL));
-        void *foodObj = smmObj_genObject(smmObj_getNodeName(foodObj), SMMNODE_TYPE_FOODCHANCE, 0, 0, smmObj_getNodeEnergy(foodObj), 0);
-		smmdb_addTail(LISTNO_FOODCARD, foodObj); 
+        	srand(time(NULL));
+        	int randomIndex = rand() % food_nr;     //랜덤한 음식 카드를 뽑기 위해서 ramdomIndex라는 변수를 새로 만들었다. 랜덤함수도 사용했다.  
+			void *foodObj = smmdb_getData(LISTNO_FOODCARD, randomIndex);    //LISTNO_FOODCARD로 txt를 불러왔다.  
         
-        printf("%s picks %s and charges %i (remained ennergy : %i)\n", cur_player[player].name, smmObj_getNodeName(foodObj), smmObj_getNodeEnergy(foodObj), cur_player[player].energy+smmObj_getNodeEnergy(foodObj));
+        	int foodEnergy = smmObj_getNodeEnergy(foodObj);   //에너지를 업데이트 하기 위해 foodEnergy라는 변수를 선언했다.  
+    		cur_player[player].energy += foodEnergy;		//foodObj에서 에너지를 가져와서 현재 플레이어의 에너지를 업데이트하는 코드
+
+    		printf("%s picks %s and charges %i (remained energy: %i)\n", cur_player[player].name, smmObj_getNodeName(foodObj), foodEnergy, cur_player[player].energy);
         
         	break;
+        
+        
+        
+        case SMMNODE_TYPE_RESTAURANT:
+        	cur_player[player].energy += smmObj_getNodeEnergy(boardPtr);
+        	printf("Let's eat in %s and charge %i energies (remained energy : %i)\n", smmObj_getNodeName(boardPtr), smmObj_getNodeEnergy(boardPtr), cur_player[player].energy);
+		 
         
         default: 
             break;
@@ -186,8 +223,7 @@ void goForward(int player, int step)
      
      printf("%s go to node %i (name: %s)\n", 
                 cur_player[player].name, cur_player[player].position,
-                smmObj_getNodeName(boardPtr));          
-                
+                smmObj_getNodeName(boardPtr));                      
 }
 
 
