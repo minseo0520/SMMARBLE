@@ -29,15 +29,8 @@ char* smmObj_getTypeName(int type)
       return (char*)smmNodeName[type];
 }
 
-//1. 구조체 형식 정의
-typedef struct smmObject {
-       char name[MAX_CHARNAME];
-       smmObjType_e objType; 
-       int type;
-       int credit;
-       int energy;
-       smmObjGrade_e grade;
-} smmObject_t;
+
+
 
 //static smmObject_t smm_node[MAX_NODE];
 //static int smmObj_noNode = 0;
@@ -99,6 +92,27 @@ char* smmObj_getNodeNameType(smmNode_e type)   //해당노드타입의 이름을 가져와서 
 
 char* smmObj_getNodeGrade(smmObjGrade_e grade)
 {
-	return smmObj_getNodeGrade(grade);
+	switch (grade) {             //grade를 출력하기 위해 새로운 switch 함수를 짰다.  
+        case smmObjGrade_Ap:
+            return "A+";
+        case smmObjGrade_A0:
+            return "A0";
+        case smmObjGrade_Am:
+            return "A-";
+        case smmObjGrade_Bp:
+            return "B+";
+        case smmObjGrade_B0:
+            return "B0";
+        case smmObjGrade_Bm:
+            return "B-";
+        case smmObjGrade_Cp:
+            return "C+";
+        case smmObjGrade_C0:
+            return "C0";
+        case smmObjGrade_Cm:
+            return "C-";
+        default:
+            return "Unknown Grade";
+    }
 }
 

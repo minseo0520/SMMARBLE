@@ -8,6 +8,8 @@
 #ifndef smm_object_h
 #define smm_object_h
 
+#include "smm_common.h"
+
 #define SMMNODE_TYPE_LECTURE		0
 #define SMMNODE_TYPE_RESTAURANT		1
 #define SMMNODE_TYPE_LABORATORY		2
@@ -46,6 +48,18 @@ typedef enum smmObjGrade {
     smmObjGrade_Cm
 } smmObjGrade_e;
 
+
+//1. 구조체 형식 정의
+typedef struct smmObject {
+       char name[MAX_CHARNAME];
+       smmObjType_e objType; 
+       int type;
+       int credit;
+       int energy;
+       smmObjGrade_e grade;
+} smmObject_t;
+
+
 /* node type :
     lecture,
     restaurant,
@@ -72,7 +86,7 @@ typedef enum smmObjGrade {
 
 
 //object generation
-void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjType_e objgrade);
+void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjType_e grade);
 
 //member retrieving
 char* smmObj_getNodeName(void* obj);
@@ -82,5 +96,5 @@ int smmObj_getNodeEnergy(void* obj);
 
 //element to string
 char* smmObj_getTypeName(int type);
-char* smmObj_getTypeGrade(int grade);
+char* smmObj_getNodeGrade(smmObjGrade_e grade);
 #endif /* smm_object_h */
