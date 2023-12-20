@@ -26,6 +26,7 @@ typedef enum smmObjType {
     smmObjType_grade
 } smmObjType_e;
 
+
 typedef enum smmNode{
     lecture,
     restaurant,
@@ -58,6 +59,11 @@ typedef struct smmObject {
        int energy;
        smmObjGrade_e grade;
 } smmObject_t;
+
+typedef struct {
+    char* gradeStr;  // 등급을 나타내는 문자열
+    float gradeValue; // 등급에 대응하는 숫자값
+} GradeInfo;
 
 
 /* node type :
@@ -96,5 +102,5 @@ int smmObj_getNodeEnergy(void* obj);
 
 //element to string
 char* smmObj_getTypeName(int type);
-char* smmObj_getNodeGrade(smmObjGrade_e grade);
+GradeInfo smmObj_getNodeGrade(smmObjGrade_e grade);
 #endif /* smm_object_h */

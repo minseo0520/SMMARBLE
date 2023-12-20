@@ -58,13 +58,13 @@ void printGrades(int player)
 {
      int i;
      void *gradePtr; 
-     smmObjGrade_e grade;
+     GradeInfo *gradeInfo;
      
-     for (i=0;i<smmdb_len(LISTNO_OFFSET_GRADE + player);i++)  //플레이어의 학점 목록 반복 
+     for (i = 0; i < smmdb_len(LISTNO_OFFSET_GRADE + player); i++)  // 플레이어의 학점 목록 반복 
      {
          gradePtr = smmdb_getData(LISTNO_OFFSET_GRADE + player, i);
-         smmObjGrade_e grade = ((smmObject_t*)gradePtr)->grade;   //학점 개체의 등급을 가져온다. 
-         printf("%s(credit : %i) : %s\n", smmObj_getNodeName(gradePtr), smmObj_getNodeCredit(gradePtr), smmObj_getNodeGrade(grade)); 
+         gradeInfo = (GradeInfo *)gradePtr;   // 학점 개체의 등급을 가져온다. 
+         printf("%s(credit : %i) : %s\n", smmObj_getNodeName(gradePtr), smmObj_getNodeCredit(gradePtr), gradeInfo->gradeStr); 
      }
 }
 
@@ -143,8 +143,8 @@ float calcAverageGrade(int player) {
 
     for (i = 0; i < numCourses; i++)   //학점을 더해주는 for문이다.
 	{        
-        smmObject_t *gradePtr = (smmObject_t *)smmdb_getData(LISTNO_OFFSET_GRADE + player, i);
-        totalGrade += gradePtr->grade;
+        GradeInfo *gradePtr = (GradeInfo *)smmdb_getData(LISTNO_OFFSET_GRADE + player, i);
+        totalGrade += gradePtr->gradeValue;
     }
 
     if (numCourses > 0)    //평균을 계산하는 코드이다.
@@ -200,26 +200,27 @@ void actionNode(int player)
 			
 					else
            	 		{
-           	 			smmObjGrade_e getRandomGrade()		//랜덤으로 등급을 반환하는 함수를 정의했다. 
+           	 			GradeInfo getRandomGrade()		//랜덤으로 등급을 반환하는 함수를 정의했다. 
 						{ 
     						srand((unsigned int)time(NULL));    // 난수 발생기 초기화
 
     						int randomIndex = rand() % 9;       // 난수 생성 (0부터 8까지)
 
-    						return (smmObjGrade_e)randomIndex;  // 난수에 해당하는 등급 반환
+    						return smmObj_getNodeGrade((smmObjGrade_e)randomIndex);  // 난수에 해당하는 등급 반환
     					}
            	 			
             			cur_player[player].accumCredit += smmObj_getNodeCredit(boardPtr);
                 		cur_player[player].energy -= smmObj_getNodeEnergy(boardPtr); 
                 		
-                		smmObjGrade_e randomGrade = getRandomGrade(); 
-                		grade = ((smmObject_t*)gradePtr)->grade; //현재 학점 개체의 등급 
+                		GradeInfo randomGrade = getRandomGrade();
+                		char* gradeStr = randomGrade.gradeStr;
+                		float gradeValue = randomGrade.gradeValue;
 
                 		printf("%s successfully takes the lecture %s with grade %s(average : %f, remained energy : %i)\n", cur_player[player].name, 
-						smmObj_getNodeName(boardPtr), smmObj_getNodeGrade(randomGrade), calcAverageGrade, cur_player[player].energy);
+						smmObj_getNodeName(boardPtr), gradeStr, calcAverageGrade(player), cur_player[player].energy);
 	
                 		// 학점 생성
-                		gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit(boardPtr), 0, randomGrade);  //수강한 강의의 이름과 credit, 학점을 저장한다.  
+                		gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit(boardPtr), 0, gradeValue);  //수강한 강의의 이름과 credit, 학점을 저장한다.  
                 		smmdb_addTail(LISTNO_OFFSET_GRADE + player, gradePtr);
 
                 		validInput = 1;  // 플래그 변수가 1이면 do-while 루프를 종료한다.
@@ -315,7 +316,7 @@ void actionNode(int player)
         	
 			printf("MISSION : %s\n", smmObj_getNodeName(festObj));  //랜덤한 미션이 나오도록 코딩했다.  
 			printf("(Press any key when mission is ended.)");
-			scanf("  %c", response);    //문자를 입력받으면 루프가 끝나도록 코딩했다.  
+			scanf(" %c", response);    //문자를 입력받으면 루프가 끝나도록 코딩했다.  
 			
 			break;
 			
@@ -491,7 +492,7 @@ int main(int argc, const char * argv[]) {
     while (fscanf(fp, "%s %i", name, &energy)==2)//read a food parameter set
     {
 	    void *foodObj = smmObj_genObject(name, SMMNODE_TYPE_FOODCHANCE, 0, 0, energy, 0);  //foodObj라는 새로운 코드 작성 
-		smmdb_addTail(LISTNO_FOODCARD, foodObj);  //위와 같이 코드 작성. LISTNO_NODE-> LISTNO_FOODCARD
+		smmdb_addTail(LISTNO_FOODCARD, foodObj);  //위와 같이 코드 작성. LISTNO_NODE -> LISTNO_FOODCARD
 		food_nr++; 
     }
     fclose(fp);

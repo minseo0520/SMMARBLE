@@ -44,7 +44,7 @@ void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, i
     ptr = (smmObject_t*)malloc(sizeof(smmObject_t));
     
     strcpy(ptr->name, name);
-    ptr->objType = objType;     //Type -> objType로 수정. 그래야 node의 Type이 정상작동 
+    ptr->objType = objType;       //Type -> objType로 수정. 그래야 node의 Type이 정상작동 
     ptr->type = type;
     ptr->credit = credit;
     ptr->energy = energy;
@@ -90,29 +90,52 @@ char* smmObj_getNodeNameType(smmNode_e type)   //해당노드타입의 이름을 가져와서 
     return smmObj_getTypeName(type);
 }
 
-char* smmObj_getNodeGrade(smmObjGrade_e grade)
-{
-	switch (grade) {             //grade를 출력하기 위해 새로운 switch 함수를 짰다.  
+GradeInfo smmObj_getNodeGrade(smmObjGrade_e grade) {
+    GradeInfo gradeInfo;
+
+    switch (grade) {
         case smmObjGrade_Ap:
-            return "A+";
+            gradeInfo.gradeStr = "A+";
+            gradeInfo.gradeValue = 4.3;
+            break;
         case smmObjGrade_A0:
-            return "A0";
+            gradeInfo.gradeStr = "A0";
+            gradeInfo.gradeValue = 4.0;
+            break;
         case smmObjGrade_Am:
-            return "A-";
+            gradeInfo.gradeStr = "A-";
+            gradeInfo.gradeValue = 3.7;
+            break;
         case smmObjGrade_Bp:
-            return "B+";
+            gradeInfo.gradeStr = "B+";
+            gradeInfo.gradeValue = 3.3;
+            break;
         case smmObjGrade_B0:
-            return "B0";
+            gradeInfo.gradeStr = "B0";
+            gradeInfo.gradeValue = 3.0;
+            break;
         case smmObjGrade_Bm:
-            return "B-";
+            gradeInfo.gradeStr = "B-";
+            gradeInfo.gradeValue = 2.7;
+            break;
         case smmObjGrade_Cp:
-            return "C+";
+            gradeInfo.gradeStr = "C+";
+            gradeInfo.gradeValue = 2.3;
+            break;
         case smmObjGrade_C0:
-            return "C0";
+            gradeInfo.gradeStr = "C0";
+            gradeInfo.gradeValue = 2.0;
+            break;
         case smmObjGrade_Cm:
-            return "C-";
+            gradeInfo.gradeStr = "C-";
+            gradeInfo.gradeValue = 1.7;
+            break;
         default:
-            return "Unknown Grade";
+            gradeInfo.gradeStr = "Unknown Grade";
+            gradeInfo.gradeValue = 0.0;
     }
+
+    return gradeInfo;
 }
+
 
