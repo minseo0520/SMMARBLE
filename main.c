@@ -160,6 +160,10 @@ float calcAverageGrade(int player) {
     }
 }
 
+
+#include <stdbool.h>
+
+
 //action code when a player stays at a node
 void actionNode(int player)
 {
@@ -177,6 +181,7 @@ void actionNode(int player)
     int validInput = 0;  //입력이 올바른지 확인하기 위한 플래그 변수  
     
     float calcAverageGrade(int player);
+    int i;
     
      switch (type)
     {   	
@@ -194,7 +199,29 @@ void actionNode(int player)
                 		// 에너지가 부족하면 다음 턴으로 넘어가도록 설정
                 		validInput = 1;
 					}
+					
+					else
+            		{
+                		// 학점을 이미 수강했는지 확인
+                		int alreadyTaken = 0;  //이미 수강했는지에 대한 플래그 변수 
+                		for (i = 0; i < smmdb_len(LISTNO_OFFSET_GRADE + player); i++)
+                		{
+                    		void *takenGradePtr = smmdb_getData(LISTNO_OFFSET_GRADE + player, i);  //플레이어가 수강한 강의에 접근 
+                    		if(strcmp(smmObj_getNodeName(takenGradePtr), smmObj_getNodeName(boardPtr)) == 0)
+                    		{
+                        		alreadyTaken = 1;
+                        		break;
+                    		}
+                		}
 
+                		if (alreadyTaken)
+                		{
+                    		printf("%s has already taken %s!\n", cur_player[player].name, smmObj_getNodeName(boardPtr));
+                    		validInput = 1; //다음 턴으로 넘기기 
+                		}
+                		
+                	
+                	
 					else
            	 		{
            	 			smmObjGrade_e getRandomGrade()		//랜덤으로 등급을 반환하는 함수를 정의했다. 
@@ -220,8 +247,11 @@ void actionNode(int player)
                 		smmdb_addTail(LISTNO_OFFSET_GRADE + player, gradePtr);
 
                 		validInput = 1;  // 플래그 변수가 1이면 do-while 루프를 종료한다.
-				    }
+				    	}
+					}
+				
 				}
+				
 				else if (strcmp(response, "drop") == 0)  //플레이어가 drop를 입력하면 
 				{
 					printf("Player %s drops the lecture %s!\n", cur_player[player].name, smmObj_getNodeName(boardPtr));
