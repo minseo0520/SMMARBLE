@@ -524,7 +524,7 @@ int main(int argc, const char * argv[]) {
     
     
     //3. SM Marble game starts ---------------------------------------------------------------------------------
-    while (1) //is anybody graduated?
+    while (isGraduated()==-1) //is anybody graduated?
     {
         int die_result;
         
@@ -545,7 +545,6 @@ int main(int argc, const char * argv[]) {
         	printf("GAME OVER! Player %s has graduated!\n", cur_player[isGraduated()].name);
         	printf("Courses taken:\n");  //이때까지 플레이어가 수강한 강의와 학점을 출력한다.  
         	printGrades(isGraduated());
-        	break;
 		}
 		
         //4-5. next turn
