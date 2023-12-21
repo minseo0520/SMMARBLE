@@ -60,11 +60,6 @@ typedef struct smmObject {
        smmObjGrade_e grade;
 } smmObject_t;
 
-typedef struct {
-    char* gradeStr;  // 등급을 나타내는 문자열
-    float gradeValue; // 등급에 대응하는 숫자값
-} GradeInfo;
-
 
 /* node type :
     lecture,
@@ -92,7 +87,7 @@ typedef struct {
 
 
 //object generation
-void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjType_e grade);
+void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade);
 
 //member retrieving
 char* smmObj_getNodeName(void* obj);
@@ -102,5 +97,5 @@ int smmObj_getNodeEnergy(void* obj);
 
 //element to string
 char* smmObj_getTypeName(int type);
-GradeInfo smmObj_getNodeGrade(smmObjGrade_e grade);
+char* smmObj_getNodeGrade(smmObjGrade_e grade);
 #endif /* smm_object_h */
